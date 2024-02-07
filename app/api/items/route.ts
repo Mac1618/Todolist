@@ -1,6 +1,6 @@
 // Connection to database
 import connectMongoDB from '@/lib/db';
-import { usePathname } from 'next/navigation';
+
 // Model
 import Item from '@/models/itemSchema';
 

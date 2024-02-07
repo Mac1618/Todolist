@@ -2,6 +2,12 @@ import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import './globals.css';
 
+// Clerk Provider
+import { ClerkProvider } from '@clerk/nextjs';
+
+// Sonner
+import { Toaster } from 'sonner';
+
 // Shadcn UI
 import { cn } from '@/lib/utils';
 
@@ -21,13 +27,13 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body 
-        className={cn('min-h-screen bg-background font-sans antialiased', 
-        fontSans.variable)}
-      >
-				{children}
-			</body>
-		</html>
+		<ClerkProvider>
+			<html lang="en">
+				<body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+					{children}
+					<Toaster position="top-right" theme="light" />
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }

@@ -1,5 +1,9 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+// Sonner 
+import { toast } from 'sonner';
 
 // Shadcn UI Components
 import { Input } from '@/components/ui/input';
@@ -9,6 +13,7 @@ import { Plus } from 'lucide-react';
 
 export const InputData = () => {
 	const [title, setTitle] = useState('');
+	const router = useRouter();
 
 	// Create a new List
 	const createItems = async (title: string) => {
@@ -28,9 +33,10 @@ export const InputData = () => {
 			}
 
       // reset
-      setTitle('');
-
-			return res.json();
+			toast.success('Created Successfully')
+			setTitle('');
+			return router.refresh();
+			// return res.json();
 		} catch (error) {
 			console.log('Error loading items', error);
 		}
