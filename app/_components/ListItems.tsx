@@ -9,53 +9,33 @@ import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Components
-
-// Query all the List
-export const getItems = async () => {
-	try {
-		const res = await fetch('http://localhost:3000/api/items', {
-			cache: 'no-store',
-		});
-
-		// If res failed
-		if (!res.ok) {
-			throw new Error('Failed to fetch Items');
-		}
-
-		return res.json();
-	} catch (error) {
-		console.log('Error loading items', error);
-	}
-};
+// Items Actions
+import { deleteItem, getItems } from '@/actions/Items';
 
 export const ListItems = async () => {
+	const [Items, isItems] = useState();
 	const router = useRouter();
-	const { Items } = await getItems();
 
-	// Delete a List
-	const deleteItem = async (id: string) => {
-		try {
-			const res = await fetch(`http://localhost:3000/api/items/${id}`, {
-				cache: 'no-store',
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
+	// Run the getItems on render
+	useEffect(() => {
+		const storeItems = async () => {
+			const items = await getItems();
+			isItems(items);
+		};
+
+		storeItems();
+	}, [Items]);
+
+	// Handle delete
+	const handleDeleteItem = (id: string) => {
+		deleteItem(id)
+			.then(() => {
+				toast.success('Deleted Successfully');
+				return router.refresh();
+			})
+			.catch((error) => {
+				toast.success('Internal Error:' + error);
 			});
-
-			// If res failed
-			if (!res.ok) {
-				throw new Error('Failed to fetch Items');
-			}
-
-			toast.success('Item was deleted Successfully');
-			router.refresh();
-
-			return res.json();
-		} catch (error) {
-			console.log('Error loading items', error);
-		}
 	};
 
 	return (
@@ -72,7 +52,7 @@ export const ListItems = async () => {
 							width={20}
 							height={20}
 							onClick={() => {
-								deleteItem(item._id);
+								handleDeleteItem(item._id);
 							}}
 						/>
 					</li>

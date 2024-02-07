@@ -1,8 +1,8 @@
 'use client';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-// Sonner 
+// Sonner
 import { toast } from 'sonner';
 
 // Shadcn UI Components
@@ -11,35 +11,23 @@ import { Input } from '@/components/ui/input';
 // Lucide icons
 import { Plus } from 'lucide-react';
 
+// Action Items
+import { createItems } from '@/actions/Items';
+
 export const InputData = () => {
 	const [title, setTitle] = useState('');
 	const router = useRouter();
-
-	// Create a new List
-	const createItems = async (title: string) => {
-		try {
-			const res = await fetch(`http://localhost:3000/api/items`, {
-				cache: 'no-store',
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ title }),
+	const handleCreateItems = (title: string) => {
+		createItems(title)
+			.then(() => {
+				// reset
+				toast.success('Created Successfully');
+				setTitle('');
+				return router.refresh();
+			})
+			.catch((error) => {
+				toast.success('Internal Error: ' + error);
 			});
-
-			// If res failed
-			if (!res.ok) {
-				throw new Error('Failed to fetch Items');
-			}
-
-      // reset
-			toast.success('Created Successfully')
-			setTitle('');
-			return router.refresh();
-			// return res.json();
-		} catch (error) {
-			console.log('Error loading items', error);
-		}
 	};
 
 	return (
@@ -57,7 +45,7 @@ export const InputData = () => {
 				width={25}
 				height={25}
 				onClick={() => {
-					createItems(title);
+					handleCreateItems(title);
 				}}
 			/>
 		</div>
